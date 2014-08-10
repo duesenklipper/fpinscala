@@ -13,6 +13,13 @@ case class Cons[+A](head: A, tail: List[A]) extends List[A]
 // Another data constructor, representing nonempty lists. Note that `tail` is another `List[A]`, which may be `Nil` or another `Cons`.
 
 object List {
+  def addElems(l1: List[Int], l2: List[Int]): List[Int] = zipWith(l1, l2)(_ + _)
+
+  def zipWith[A, B, C](l1: List[A], l2: List[B])(f: (A, B) => C): List[C] = (l1, l2) match {
+    case (Nil, _) => Nil
+    case (_, Nil) => Nil
+    case (Cons(h1, t1), Cons(h2, t2)) => Cons(f(h1, h2), zipWith(t1, t2)(f))
+  }
 
   def toStringList(l: List[Double]): List[String] = map(l)((d: Double) => d.toString)
 
@@ -112,7 +119,20 @@ object List {
   def add1(l: List[Int]): List[Int] =
     foldRight(l, Nil: List[Int])((i, l) => Cons(i + 1, l))
 
-  def filter[A](l: List[A])(f: A => Boolean): List[A] = foldRight(l, Nil: List[A])((a, bs) => if (f(a)) Cons(a, bs) else bs)
+  def filter[A](l: List[A])(f: A => Boolean): List[A] = flatMap(l)((a) => if (f(a)) List(a) else Nil)
 
-  def flatMap[A,B](l: List[A])(f: A => List[B]): List[B] = foldRight(l, Nil: List[B])((a, bs) => append(f(a), bs))
+  def flatMap[A, B](l: List[A])(f: A => List[B]): List[B] = foldRight(l, Nil: List[B])((a, bs) => append(f(a), bs))
+
+  def startsWith[A](l: List[A], sub: List[A]): Boolean = (l, sub) match {
+    case (_, Nil) => true
+    case (Cons(h1, t1), Cons(h2, t2)) if (h1 == h2) => startsWith(t1, t2)
+    case _ => false
+  }
+
+  @annotation.tailrec
+  def hasSubsequence[A](l: List[A], sub: List[A]): Boolean = l match {
+    case Nil => false
+    case Cons(h, t) if startsWith(l, sub) => true
+    case Cons(h, t) => hasSubsequence(t, sub)
+  }
 }

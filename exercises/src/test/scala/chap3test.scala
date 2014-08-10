@@ -56,6 +56,19 @@ class ListSpec extends FlatSpec with Matchers {
   "flatmap" should "flatmap" in {
     assert(List(1,1,2,2,3,3) == List.flatMap(List(1,2,3))(x => List(x, x)))
   }
+
+  "addElems" should "add" in {
+    assert(List(3,5,7) == List.addElems(List(1,2,3),List(2,3,4)))
+  }
+
+  "hasSubsequence" should "find a subseq that exists" in {
+    assert(List.hasSubsequence(List(1, 2, 3, 4, 5), List(2, 3, 4)))
+  }
+  "hasSubsequence" should "not find a subseq that does not exist" in {
+    assert(!List.hasSubsequence(List(1, 2, 3, 4, 5), List(1, 3, 4)))
+  }
+
+
 }
 
 
