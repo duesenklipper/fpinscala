@@ -13,6 +13,9 @@ case class Cons[+A](head: A, tail: List[A]) extends List[A]
 // Another data constructor, representing nonempty lists. Note that `tail` is another `List[A]`, which may be `Nil` or another `Cons`.
 
 object List {
+
+  def toStringList(l: List[Double]): List[String] = map(l)((d: Double) => d.toString)
+
   // `List` companion object. Contains functions for creating and working with lists.
   def sum(ints: List[Int]): Int = ints match {
     // A function that uses pattern matching to add up a list of integers
@@ -101,8 +104,15 @@ object List {
   def foldRightViaLeft[A, B](as: List[A], z: B)(f: (A, B) => B): B =
     foldLeft(reverse(as), z)((a, b) => f(b, a))
 
-  def map[A, B](l: List[A])(f: A => B): List[B] = sys.error("todo")
+  def map[A, B](l: List[A])(f: A => B): List[B] = foldRight(l, Nil: List[B])((a, bs) => Cons(f(a), bs))
 
   def concat[A](ls: List[List[A]]): List[A] =
     foldRight(ls, Nil: List[A])(append(_, _))
+
+  def add1(l: List[Int]): List[Int] =
+    foldRight(l, Nil: List[Int])((i, l) => Cons(i + 1, l))
+
+  def filter[A](l: List[A])(f: A => Boolean): List[A] = foldRight(l, Nil: List[A])((a, bs) => if (f(a)) Cons(a, bs) else bs)
+
+  def flatMap[A,B](l: List[A])(f: A => List[B]): List[B] = foldRight(l, Nil: List[B])((a, bs) => append(f(a), bs))
 }

@@ -40,6 +40,22 @@ class ListSpec extends FlatSpec with Matchers {
   "concat" should "concat" in {
     assert(List(1, 2, 3, 4, 5, 6) == List.concat(List(List(1, 2), List(3, 4), List(5, 6))))
   }
+
+  "add1" should "add 1 to each elem" in {
+    assert(List(2, 3, 4) == List.add1(List(1, 2, 3)))
+  }
+
+  "toStringList" should "convert every element into a string" in {
+    assert(List("1.0", "2.0","3.0") == List.toStringList(List(1.0,2.0,3.0)))
+  }
+
+  "filter" should "filter" in {
+    assert(List(2,4,6) == List.filter(List(1,2,3,4,5,6))(_ % 2 == 0))
+  }
+
+  "flatmap" should "flatmap" in {
+    assert(List(1,1,2,2,3,3) == List.flatMap(List(1,2,3))(x => List(x, x)))
+  }
 }
 
 
