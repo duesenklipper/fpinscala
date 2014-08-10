@@ -46,19 +46,19 @@ class ListSpec extends FlatSpec with Matchers {
   }
 
   "toStringList" should "convert every element into a string" in {
-    assert(List("1.0", "2.0","3.0") == List.toStringList(List(1.0,2.0,3.0)))
+    assert(List("1.0", "2.0", "3.0") == List.toStringList(List(1.0, 2.0, 3.0)))
   }
 
   "filter" should "filter" in {
-    assert(List(2,4,6) == List.filter(List(1,2,3,4,5,6))(_ % 2 == 0))
+    assert(List(2, 4, 6) == List.filter(List(1, 2, 3, 4, 5, 6))(_ % 2 == 0))
   }
 
   "flatmap" should "flatmap" in {
-    assert(List(1,1,2,2,3,3) == List.flatMap(List(1,2,3))(x => List(x, x)))
+    assert(List(1, 1, 2, 2, 3, 3) == List.flatMap(List(1, 2, 3))(x => List(x, x)))
   }
 
   "addElems" should "add" in {
-    assert(List(3,5,7) == List.addElems(List(1,2,3),List(2,3,4)))
+    assert(List(3, 5, 7) == List.addElems(List(1, 2, 3), List(2, 3, 4)))
   }
 
   "hasSubsequence" should "find a subseq that exists" in {
@@ -69,6 +69,27 @@ class ListSpec extends FlatSpec with Matchers {
   }
 
 
+}
+
+class TreeSpec extends FlatSpec with Matchers {
+  "size" should "size the tree correctly" in {
+    assert(5 == Tree.size(Branch(Leaf(1), Branch(Leaf(2), Leaf(3)))))
+  }
+
+  "maximum" should "find the maximum" in {
+    assert(3 == Tree.maximum(Branch(Leaf(1), Branch(Leaf(2), Leaf(3)))))
+  }
+
+  "depth" should "find the depth" in {
+    assert(3 == Tree.depth(Branch(Leaf(1), Branch(Leaf(2), Branch(Leaf(3), Leaf(4))))))
+  }
+
+  "map" should "map" in {
+    val expected: Branch[Int] = Branch(Leaf(2), Branch(Leaf(3), Leaf(4)))
+    val initial: Branch[Int] = Branch(Leaf(1), Branch(Leaf(2), Leaf(3)))
+
+    assert(expected == Tree.map(initial)(_ + 1))
+  }
 }
 
 
