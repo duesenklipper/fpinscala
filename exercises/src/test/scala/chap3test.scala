@@ -73,7 +73,7 @@ class ListSpec extends FlatSpec with Matchers {
 
 class TreeSpec extends FlatSpec with Matchers {
   "size" should "size the tree correctly" in {
-    assert(5 == Tree.size(Branch(Leaf(1), Branch(Leaf(2), Leaf(3)))))
+    assert(7 == Tree.size(Branch(Branch(Leaf(1), Leaf(4)), Branch(Leaf(2), Leaf(3)))))
   }
 
   "maximum" should "find the maximum" in {
@@ -81,7 +81,7 @@ class TreeSpec extends FlatSpec with Matchers {
   }
 
   "depth" should "find the depth" in {
-    assert(3 == Tree.depth(Branch(Leaf(1), Branch(Leaf(2), Branch(Leaf(3), Leaf(4))))))
+    assert(3 == Tree.depth(Branch(Branch(Leaf(1), Leaf(2)), Branch(Leaf(2), Branch(Leaf(3), Leaf(4))))))
   }
 
   "map" should "map" in {
