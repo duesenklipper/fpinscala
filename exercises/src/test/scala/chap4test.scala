@@ -1,4 +1,5 @@
 package fpinscala.errorhandling
+
 import org.scalatest._
 
 class OptionSpec extends FlatSpec with Matchers {
@@ -38,4 +39,13 @@ class OptionSpec extends FlatSpec with Matchers {
   "filter" should "give none on None" in {
     assert(None == (None.filter(x => false)))
   }
+
+  "sequence" should "give some when the list contains only some" in {
+    assert(Some(List(1, 2, 3, 4)) == Option.sequence(List(Some(1), Some(2), Some(3), Some(4))))
+  }
+  "sequence" should "give none when the list contains at least one none" in {
+    assert(None == Option.sequence(List(Some(1), None, Some(3), Some(4))))
+  }
+
+
 }
