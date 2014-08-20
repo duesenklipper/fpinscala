@@ -49,3 +49,51 @@ class OptionSpec extends FlatSpec with Matchers {
 
 
 }
+
+class EitherSpec extends FlatSpec with Matchers {
+  "map" should "map to Left on Left" in {
+    val left: Either[String, Int] = Left("foo")
+    assert(Left("foo") == left.map(_ + 1))
+  }
+
+  "map" should "map to Right on Right" in {
+    assert(Right(2) == Right(1).map(_ + 1))
+  }
+  "flatmap" should "map to Left on Left" in {
+    val left: Either[String, Int] = Left("foo")
+    assert(Left("foo") == left.flatMap(l => Right(l + 1)))
+  }
+
+  "flatmap" should "map to Right on Right" in {
+    assert(Right(2) == Right(1).flatMap(r => Right(r + 1)))
+  }
+
+  "forComprehension" should "work" in {
+    val a: Either[String, Int] = Right(1)
+    val b: Either[String, Int] = Left("foo")
+    val actual = for {
+      aa <- a
+      bb <- b
+    } yield aa + bb
+    assert(Left("foo") == actual)
+  }
+
+  "orElse" should "give itself on Right" in {
+    assert(Right(1) == Right(1).orElse(Right(2)))
+  }
+  "orElse" should "give else on left" in {
+    assert(Right(2) == Left("foo").orElse(Right(2)))
+  }
+
+  "map2" should "map on both right" in {
+    assert(Right(3) == Right(1).map2(Right(2))(_ + _))
+  }
+  "map2" should "fail on first left" in {
+    val left: Either[String, Int] = Left("foo")
+    assert(Left("foo") == left.map2(Right(2))(_ + _))
+  }
+  "map2" should "fail on second left" in {
+    val left: Either[String, Int] = Left("foo")
+    assert(Left("foo") == Right(1).map2(left)(_ + _))
+  }
+}
