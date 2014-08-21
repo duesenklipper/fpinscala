@@ -26,6 +26,8 @@ trait Stream[+A] {
   def forAll(p: A => Boolean): Boolean = sys.error("todo")
 
   def startsWith[A](s: Stream[A]): Boolean = sys.error("todo")
+
+  def toList: List[A] = this.foldRight(Nil: List[A])((a, list) => a :: list)
 }
 case object Empty extends Stream[Nothing]
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A]
