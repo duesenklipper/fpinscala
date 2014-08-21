@@ -31,7 +31,14 @@ trait Stream[+A] {
     case Cons(h, t) => if (n == 0) this else t().drop(n - 1)
   }
 
-  def takeWhile(p: A => Boolean): Stream[A] = sys.error("todo")
+  def takeWhile(p: A => Boolean): Stream[A] = this  match {
+    case Empty => Empty
+    case Cons(h, t) => {
+      lazy val head = h()
+      if (p(head)) Cons(() => head, () => t().takeWhile(p))
+      else Empty
+    }
+  }
 
   def forAll(p: A => Boolean): Boolean = sys.error("todo")
 
