@@ -19,4 +19,11 @@ class StreamSpec extends FlatSpec with Matchers {
   "takeWhile" should "take while p is true" in {
     assert(List(1, 2, 3) == cons(1, cons(2, cons(3, cons(4, Empty)))).takeWhile(_ < 4).toList)
   }
+
+  "forAll" should "give true for true" in {
+    assert(cons(1, cons(2, cons(3, Empty))).forAll(_ < 4))
+  }
+  "forAll" should "give false for differences" in {
+    assert(!cons(1, cons(4, cons(3, Empty))).forAll(_ < 4))
+  }
 }
