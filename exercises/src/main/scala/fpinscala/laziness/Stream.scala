@@ -1,6 +1,10 @@
 package fpinscala.laziness
 
 import Stream._
+
+import scala.annotation.tailrec
+import scala.collection.mutable.ListBuffer
+
 trait Stream[+A] {
 
   def foldRight[B](z: => B)(f: (A, => B) => B): B = // The arrow `=>` in front of the argument type `B` means that the function `f` takes its second argument by name and may choose not to evaluate it.
@@ -17,9 +21,15 @@ trait Stream[+A] {
     case Empty => None
     case Cons(h, t) => if (f(h())) Some(h()) else t().find(f)
   }
-  def take(n: Int): Stream[A] = sys.error("todo")
+  def take(n: Int): Stream[A] = this match {
+    case Empty => Empty
+    case Cons(h, t) => if (n > 0) Cons(() => h(), () => t().take(n - 1)) else Empty
+  }
 
-  def drop(n: Int): Stream[A] = sys.error("todo")
+  def drop(n: Int): Stream[A] = this match {
+    case Empty => Empty
+    case Cons(h, t) => if (n == 0) this else t().drop(n - 1)
+  }
 
   def takeWhile(p: A => Boolean): Stream[A] = sys.error("todo")
 
@@ -27,7 +37,18 @@ trait Stream[+A] {
 
   def startsWith[A](s: Stream[A]): Boolean = sys.error("todo")
 
-  def toList: List[A] = this.foldRight(Nil: List[A])((a, list) => a :: list)
+  def toListSlow: List[A] = this.foldRight(Nil: List[A])((a, list) => a :: list)
+  def toList: List[A] = {
+    val buf = new ListBuffer[A]
+    @tailrec def loop(s: Stream[A]): List[A] = s match {
+      case Empty => buf.toList
+      case Cons(h, t) => {
+        buf += h()
+        loop(t())
+      }
+    }
+    loop(this)
+  }
 }
 case object Empty extends Stream[Nothing]
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A]
