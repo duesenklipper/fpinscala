@@ -52,4 +52,12 @@ class StreamSpec extends FlatSpec with Matchers {
   "flatMap" should "flatMap" in {
     assert(List(1, 1, 2, 2) == cons(1, cons(2, Empty)).flatMap(x => cons(x, cons(x, Empty))).toList)
   }
+  
+  "fibs" should "fib" in {
+    assert(List(0, 1, 1, 2, 3, 5, 8) == Stream.fibs().take(7).toList)
+  }
+  
+  "unfold" should "unfold up to None" in {
+    assert(List(1, 2, 3, 4) == Stream.unfold(1)(x => if (x < 5) Some((x, x + 1)) else None).toList)
+  }
 }
