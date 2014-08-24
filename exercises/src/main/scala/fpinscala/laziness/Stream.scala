@@ -63,6 +63,16 @@ trait Stream[+A] {
     }
     loop(this)
   }
+  
+  def headOption: Option[A] = foldRight[Option[A]](None)((h, t) => Some(h))
+  
+  def map[B](f: A => B): Stream[B] = foldRight(Empty: Stream[B])((h, t) => cons(f(h), t))
+  
+  def filter(p: A => Boolean): Stream[A] = foldRight(Empty: Stream[A])((h, t) => if (p(h)) cons(h, t) else t)
+  
+  def append[B >: A](s: => Stream[B]): Stream[B] = foldRight(s)((h, t) => cons(h, t))
+  
+  def flatMap[B](f: A => Stream[B]): Stream[B] = foldRight(Empty: Stream[B])((h, t) => f(h) append t)
 }
 case object Empty extends Stream[Nothing]
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A]
