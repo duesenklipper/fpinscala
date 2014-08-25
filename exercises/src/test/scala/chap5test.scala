@@ -60,4 +60,10 @@ class StreamSpec extends FlatSpec with Matchers {
   "unfold" should "unfold up to None" in {
     assert(List(1, 2, 3, 4) == Stream.unfold(1)(x => if (x < 5) Some((x, x + 1)) else None).toList)
   }
+  
+  "zipWith" should "zipWith" in {
+    assert(List(2, 4, 6) == cons(1, cons(2, cons(3, Empty))).zipWith(cons(1, cons(2, cons(3, Empty)))){
+      case (l, r) => l + r
+    }.toList)
+  }
 }
