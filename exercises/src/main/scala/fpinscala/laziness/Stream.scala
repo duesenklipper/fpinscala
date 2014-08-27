@@ -64,8 +64,6 @@ trait Stream[+A] {
 
   def forAll(p: A => Boolean): Boolean = foldRight(true)((a, b) => p(a) && b)
 
-  def startsWith[A](s: Stream[A]): Boolean = sys.error("todo")
-
   def toListSlow: List[A] = this.foldRight(Nil: List[A])((a, list) => a :: list)
   def toList: List[A] = {
     val buf = new ListBuffer[A]
@@ -107,9 +105,9 @@ trait Stream[+A] {
   def zipWithAll[B, C](s2: Stream[B])(f: (Option[A], Option[B]) => C): Stream[C] =
     Stream.unfold((this, s2)) {
       case (Empty, Empty) => None
-      case (Cons(h, t), Empty) => Some(f(Some(h()), Option.empty[B]) ,(t(), empty[B]))
-      case (Empty, Cons(h, t)) => Some(f(Option.empty[A], Some(h())) , (empty[A] , t()))
-      case (Cons(h1, t1), Cons(h2, t2)) => Some(f(Some(h1()), Some(h2())) , (t1() , t2()))
+      case (Cons(h, t), Empty) => Some(f(Some(h()), Option.empty[B]), (t(), empty[B]))
+      case (Empty, Cons(h, t)) => Some(f(Option.empty[A], Some(h())), (empty[A], t()))
+      case (Cons(h1, t1), Cons(h2, t2)) => Some(f(Some(h1()), Some(h2())), (t1(), t2()))
     }
 
   // type inference problem?
@@ -120,6 +118,23 @@ trait Stream[+A] {
 //      case (Empty, Empty) => None
 //    }
 
+  def startsWith_mine[A](s: Stream[A]): Boolean = zipWithAll(s){
+    case (Some(a1), Some(a2)) => a1 == a2
+    case (_, None) => true
+    case (None, _) => false
+  }.forAll(_ == true)
+
+  def startsWith[A](s: Stream[A]): Boolean = startsWith_book(s)
+
+  def startsWith_book[A](s: Stream[A]): Boolean =
+    zipAll(s).takeWhile(!_._2.isEmpty) forAll {
+      case (h, h2) => h == h2
+    }
+
+  def tails: Stream[Stream[A]] = unfold(this) {
+    case x: Cons[A] => Some((x: Stream[A], x.t()))
+    case Empty => None
+  } append Stream(Empty)
 }
 case object Empty extends Stream[Nothing]
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A]
