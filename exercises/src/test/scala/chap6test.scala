@@ -23,5 +23,7 @@ class StateSpec extends FlatSpec with Matchers {
     assert(d < 1.0)
   }
   
-  
+  "sequence" should "sequence" in {
+    assert(List(1, 2, 3) == sequence(List(unit(1), unit(2), unit(3)))(Simple(1L))._1)
+  }
 }
