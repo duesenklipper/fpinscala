@@ -18,6 +18,20 @@ trait Stream[+A] {
       case _ => z
     }
 
+  def scanRight[B](z: => B)(f: (A, => B) => B): Stream[B] =
+  // wir bauen einen stream an dessen Ende das zero-Element stehen muss, also uebergeben wir cons(z, Empty)
+  // das hat den richtigen typ und beendet den stream
+    foldRight(cons(z, Empty))((a, tail) => {
+      // wir brauchen das ergebnis der rekursion zweimal: einmal als tail des streams, den wir in der aktuellen
+      // iteration bauen, einmal brauchen wir dessen head fuer die additions-funktion.
+      // wir brauchen nur den head, weil der ja schon rekursiv aus den weiteren additionen erzeugt wurde
+      // in 'recursed' cachen wir die rekursion, damit sie nur einmal passiert
+      val recursed = tail
+      // ergebnis der iteration: stream aus addition von aktuellem wert und head der rekursion, tail ist die rekursion selbst
+      cons(f(a, recursed.headOption.get), recursed)
+    }
+    )
+
   def exists(p: A => Boolean): Boolean = 
     foldRight(false)((a, b) => p(a) || b) // Here `b` is the unevaluated recursive step that folds the tail of the stream. If `p(a)` returns `true`, `b` will never be evaluated and the computation terminates early.
 
@@ -135,6 +149,9 @@ trait Stream[+A] {
     case x: Cons[A] => Some((x: Stream[A], x.t()))
     case Empty => None
   } append Stream(Empty)
+
+  def hasSubsequence[A](s: Stream[A]): Boolean =
+    tails exists (_ startsWith s)
 }
 case object Empty extends Stream[Nothing]
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A]

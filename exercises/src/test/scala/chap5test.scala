@@ -85,4 +85,8 @@ class StreamSpec extends FlatSpec with Matchers {
   "tails" should "give tails" in {
     assert(Stream(Stream(1, 2, 3), Stream(2, 3), Stream(3), Stream()).toList.map(_.toList) == Stream(1, 2, 3).tails.toList.map(_.toList))
   }
+  
+  "scanRight" should "scan right" in {
+    assert(List(6, 5, 3, 0) == Stream(1, 2, 3).scanRight(0)(_ + _).toList)
+  }
 }
